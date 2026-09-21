@@ -635,6 +635,11 @@
 
 <script>
 /* ---------------- DATA ---------------- */
+// Paste tutorial video URLs here once recorded — leave as '' to keep the "coming soon" toast.
+const TUTORIAL_URLS = {
+  desktop: '',
+  mobile: ''
+};
 const events = [
   {id:'e1', name:'Smith–Ortega Wedding', client:'Alyssa Smith', type:'Wedding', date:'Oct 4, 2026', stage:'confirmed', progress:72, budget:48000, spent:33200},
   {id:'e2', name:'Nimbus Corp. Summit', client:'Nimbus Inc.', type:'Conference', date:'Nov 12, 2026', stage:'booking', progress:41, budget:120000, spent:52800},
@@ -1213,8 +1218,13 @@ function showLogin(){
 function hideLogin(){
   loginScreen.classList.add('hidden');
 }
-document.getElementById('desktopTutorialBtn').addEventListener('click', ()=> showToast('Desktop tutorial coming soon'));
-document.getElementById('mobileTutorialBtn').addEventListener('click', ()=> showToast('Mobile tutorial coming soon'));
+function openTutorial(key, label){
+  const url = TUTORIAL_URLS[key];
+  if(url) window.open(url, '_blank', 'noopener');
+  else showToast(`${label} tutorial coming soon`);
+}
+document.getElementById('desktopTutorialBtn').addEventListener('click', ()=> openTutorial('desktop', 'Desktop'));
+document.getElementById('mobileTutorialBtn').addEventListener('click', ()=> openTutorial('mobile', 'Mobile'));
 function logOut(){
   closeAllDropdowns();
   try{ sessionStorage.removeItem('mtep-user'); }catch(e){}
