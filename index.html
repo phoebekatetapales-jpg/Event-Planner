@@ -6,37 +6,37 @@
 <title>MT Event Planner — Dashboard</title>
 <style>
   :root{
-    --bg:#F6F0E4; --surface:#FCFAF4; --surface-2:#E1D8C4; --border:color-mix(in srgb, #A8823E 25%, #FCFAF4);
-    --text:#7A3B41; --text-dim:color-mix(in srgb, #7A3B41 55%, #A8823E 45%); --text-faint:color-mix(in srgb, #A8823E 65%, #FCFAF4 35%);
-    --accent:#A8823E; --accent-2:#C9AD7C; --accent-soft:color-mix(in srgb, #A8823E 16%, #FCFAF4);
-    --good:#6E7A5E; --good-soft:#DCE2D4;
-    --warn:color-mix(in srgb, #A8823E 60%, #7A3B41 40%); --warn-soft:color-mix(in srgb, #A8823E 20%, #FCFAF4);
-    --bad:#7A3B41; --bad-soft:color-mix(in srgb, #7A3B41 14%, #FCFAF4);
-    --info:#C9AD7C; --info-soft:color-mix(in srgb, #C9AD7C 22%, #FCFAF4);
-    --shadow: 0 1px 2px rgba(90,60,30,.06), 0 6px 18px rgba(90,60,30,.08);
+    --bg:#F5F7FA; --surface:#FFFFFF; --surface-2:#EEF1F5; --border:#DDE2EA;
+    --text:#1E293B; --text-dim:#475569; --text-faint:#8391A5;
+    --accent:#1F4E8C; --accent-2:#3B82C4; --accent-soft:#E6EEF8;
+    --good:#1F7A4D; --good-soft:#E3F2EA;
+    --warn:#B45309; --warn-soft:#FDF1E1;
+    --bad:#B42318; --bad-soft:#FBE9E7;
+    --info:#2563A8; --info-soft:#E4EEF9;
+    --shadow: 0 1px 2px rgba(15,23,42,.05), 0 6px 18px rgba(15,23,42,.07);
     --radius: 14px;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
-      --bg:#211712; --surface:#2b1f19; --surface-2:#382a22; --border:#4a3830;
-      --text:#F0E6D8; --text-dim:#D3B896; --text-faint:#9c8168;
-      --accent:#C9AD7C; --accent-2:#E1D8C4; --accent-soft:#3d2f1e;
-      --good:#9cae86; --good-soft:#2c3226;
-      --warn:#d19b6a; --warn-soft:#3a2a1c;
-      --bad:#d98f96; --bad-soft:#3a2024;
-      --info:#C9AD7C; --info-soft:#3d3222;
+      --bg:#0F1623; --surface:#161F2E; --surface-2:#1E293B; --border:#2A3547;
+      --text:#E6EBF2; --text-dim:#A9B5C7; --text-faint:#728099;
+      --accent:#6EA8E8; --accent-2:#93C0F0; --accent-soft:#1B2C45;
+      --good:#5FBF8E; --good-soft:#15291F;
+      --warn:#E0A458; --warn-soft:#2E2314;
+      --bad:#EF8579; --bad-soft:#35191A;
+      --info:#7AB3EC; --info-soft:#18283D;
       --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
     }
   }
   :root[data-theme="dark"]{
-    --bg:#211712; --surface:#2b1f19; --surface-2:#382a22; --border:#4a3830;
-    --text:#F0E6D8; --text-dim:#D3B896; --text-faint:#9c8168;
-    --accent:#C9AD7C; --accent-2:#E1D8C4; --accent-soft:#3d2f1e;
-    --good:#9cae86; --good-soft:#2c3226;
-    --warn:#d19b6a; --warn-soft:#3a2a1c;
-    --bad:#d98f96; --bad-soft:#3a2024;
-    --info:#C9AD7C; --info-soft:#3d3222;
+    --bg:#0F1623; --surface:#161F2E; --surface-2:#1E293B; --border:#2A3547;
+    --text:#E6EBF2; --text-dim:#A9B5C7; --text-faint:#728099;
+    --accent:#6EA8E8; --accent-2:#93C0F0; --accent-soft:#1B2C45;
+    --good:#5FBF8E; --good-soft:#15291F;
+    --warn:#E0A458; --warn-soft:#2E2314;
+    --bad:#EF8579; --bad-soft:#35191A;
+    --info:#7AB3EC; --info-soft:#18283D;
     --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35);
   }
   *{box-sizing:border-box;}
@@ -50,7 +50,7 @@
     display:flex; flex-direction:column; padding:20px 14px; gap:22px;
     position:sticky; top:0; height:100vh; overflow-y:auto;
   }
-  .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(30,20,15,.4);z-index:80;}
+  .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.4);z-index:80;}
   .sidebar-overlay.show{display:block;}
   .hamburger{display:none;width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--surface);align-items:center;justify-content:center;color:var(--text-dim);cursor:pointer;flex-shrink:0;}
   .hamburger svg{width:18px;height:18px;}
@@ -91,7 +91,7 @@
     background:var(--text);color:var(--bg);border:none;border-radius:10px;padding:9px 16px;font-size:13.5px;font-weight:600;
     display:flex;align-items:center;gap:6px;cursor:pointer;
   }
-  .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent-2),var(--accent));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#1c1f2b;border:none;padding:0;cursor:pointer;}
+  .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent-2),var(--accent));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--bg);border:none;padding:0;cursor:pointer;}
 
   /* Dropdown menus */
   .menu-wrap{position:relative;}
@@ -108,7 +108,7 @@
   .notif-empty{padding:14px 8px;font-size:12.5px;color:var(--text-faint);text-align:center;}
 
   /* Modal */
-  .modal-overlay{position:fixed;inset:0;background:rgba(30,20,15,.45);display:none;align-items:center;justify-content:center;z-index:100;padding:20px;}
+  .modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,.45);display:none;align-items:center;justify-content:center;z-index:100;padding:20px;}
   .modal-overlay.open{display:flex;}
   .modal{width:440px;max-width:100%;}
   .field-col{display:flex;flex-direction:column;gap:10px;margin-top:4px;}
@@ -244,7 +244,7 @@
 
   .chip-filter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
   .chip{padding:6px 13px;border-radius:20px;border:1px solid var(--border);background:var(--surface);font-size:12px;font-weight:600;cursor:pointer;color:var(--text-dim);}
-  .chip.selected{background:var(--accent);border-color:var(--accent);color:#fff;}
+  .chip.selected{background:var(--accent);border-color:var(--accent);color:var(--bg);}
 
   .rsvp{font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;}
   .rsvp.confirmed{background:var(--good-soft);color:var(--good);}
