@@ -285,6 +285,45 @@
 
   .table-scroll{width:100%;overflow-x:auto;}
 
+  /* RSVP & Check-In */
+  .rsvp-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+  .rsvp-col{display:flex;flex-direction:column;gap:16px;min-width:0;}
+  .code-tag{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;font-weight:700;letter-spacing:.06em;background:var(--surface-2);border:1px solid var(--border);border-radius:7px;padding:3px 7px;cursor:pointer;color:var(--text);}
+  .code-tag:hover{border-color:var(--accent);color:var(--accent);}
+  .rsvp.checked{background:var(--accent-soft);color:var(--accent);}
+  .muted-cell{color:var(--text-faint);}
+  .checkin-form{display:flex;gap:8px;}
+  .checkin-form input{flex:1;min-width:0;padding:10px 12px;border-radius:9px;border:1px solid var(--border);background:var(--surface-2);color:var(--text);font-size:14px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;text-transform:uppercase;letter-spacing:.06em;}
+  .checkin-form input:disabled{opacity:.5;}
+  .verify-card{margin-top:12px;border:1px solid var(--border);border-radius:11px;padding:14px;display:none;}
+  .verify-card.show{display:block;}
+  .verify-card.ok{border-color:var(--good);background:var(--good-soft);}
+  .verify-card.dup,.verify-card.err{border-color:var(--bad);background:var(--bad-soft);}
+  .verify-card .vname{font-size:15px;font-weight:700;}
+  .verify-card .vmeta{font-size:12px;color:var(--text-dim);margin-top:4px;line-height:1.6;}
+  .verify-card .vmsg{font-size:12.5px;font-weight:700;margin-top:8px;}
+  .verify-card.dup .vmsg,.verify-card.err .vmsg{color:var(--bad);}
+  .verify-actions{display:flex;gap:8px;margin-top:12px;}
+  .recent-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 2px;border-bottom:1px solid var(--border);font-size:12.5px;}
+  .recent-item:last-child{border-bottom:none;}
+  .recent-item .m{font-size:11px;color:var(--text-faint);}
+  .closed-banner{display:none;align-items:center;justify-content:space-between;gap:10px;background:var(--warn-soft);color:var(--warn);border-radius:10px;padding:10px 12px;font-size:12.5px;font-weight:600;margin-bottom:12px;}
+  .closed-banner.show{display:flex;}
+  .diet-note{font-size:12px;padding:6px 0;border-bottom:1px dashed var(--border);color:var(--text-dim);}
+  .diet-note:last-child{border-bottom:none;}
+  .diet-note strong{color:var(--text);}
+  .portal{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  @media (max-width:980px){.portal{grid-template-columns:1fr;}}
+  .portal-frame{border:1px solid var(--border);border-radius:12px;padding:18px;background:var(--surface-2);}
+  .portal-frame h4{margin:0 0 4px;font-size:15px;}
+  .portal-frame p{margin:0 0 14px;font-size:12.5px;color:var(--text-dim);}
+  .seg{display:flex;gap:6px;}
+  .seg .chip{flex:1;text-align:center;}
+  .pass-card{border:2px dashed var(--accent);border-radius:12px;padding:18px;text-align:center;background:var(--surface);}
+  .pass-card .pcode{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:26px;font-weight:800;letter-spacing:.12em;color:var(--accent);margin:8px 0;}
+  .pass-card .pname{font-size:14px;font-weight:700;}
+  .pass-card .pmeta{font-size:12px;color:var(--text-dim);}
+
   ::-webkit-scrollbar{height:8px;width:8px;}
   ::-webkit-scrollbar-thumb{background:var(--border);border-radius:8px;}
 
@@ -369,6 +408,10 @@
       <button class="nav-item" data-view="vendors">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 4.5a3.2 3.2 0 0 1 0 6.4M20.5 20a5 5 0 0 0-5-5.3"/></svg>
         Vendors & Guests
+      </button>
+      <button class="nav-item" data-view="rsvp">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/><path d="M8.5 14.5l2 2 4-4"/></svg>
+        RSVP & Check-In
       </button>
       <button class="nav-item" data-view="timeline">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
@@ -551,6 +594,128 @@
         </div>
       </section>
 
+      <!-- ================= RSVP & CHECK-IN ================= -->
+      <section id="view-rsvp" class="view">
+        <div class="rsvp-head">
+          <div>
+            <h1 class="page-title">RSVP & Check-In</h1>
+            <p class="page-sub" id="rsvpEventLabel">Invitation codes, guest replies, and verified door check-in.</p>
+          </div>
+          <button class="toggle-btn" id="completeCheckinBtn">Complete check-in</button>
+        </div>
+
+        <div class="grid cols-4" style="margin-bottom:16px;">
+          <div class="card kpi">
+            <div class="icon" style="background:var(--accent-soft);color:var(--accent);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 6 10-6"/></svg>
+            </div>
+            <div class="value" id="rsvpKpiInvited">0</div>
+            <div class="label">Invitations Sent</div>
+            <span class="delta flat" id="rsvpKpiInvitedSub"></span>
+          </div>
+          <div class="card kpi">
+            <div class="icon" style="background:var(--good-soft);color:var(--good);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0"/><path d="M16 11l2 2 4-4"/></svg>
+            </div>
+            <div class="value" id="rsvpKpiAttending">0</div>
+            <div class="label">Attending Headcount</div>
+            <span class="delta up" id="rsvpKpiAttendingSub"></span>
+          </div>
+          <div class="card kpi">
+            <div class="icon" style="background:var(--warn-soft);color:var(--warn);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+            </div>
+            <div class="value" id="rsvpKpiPending">0</div>
+            <div class="label">Awaiting Reply</div>
+            <span class="delta flat" id="rsvpKpiPendingSub"></span>
+          </div>
+          <div class="card kpi">
+            <div class="icon" style="background:var(--info-soft);color:var(--info);">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            </div>
+            <div class="value" id="rsvpKpiChecked">0</div>
+            <div class="label">Checked In</div>
+            <span class="delta up" id="rsvpKpiCheckedSub"></span>
+          </div>
+        </div>
+
+        <div class="grid cols-2">
+          <div class="card">
+            <div class="card-head"><h3>Guest RSVP Tracker</h3><span class="muted">Tap a code to copy it</span></div>
+            <div class="chip-filter" id="rsvpFilterChips"></div>
+            <div class="table-scroll">
+              <table>
+                <thead><tr><th>Guest</th><th>Code</th><th>Reply</th><th>Meal</th><th>Plus-ones</th><th>Door</th></tr></thead>
+                <tbody id="rsvpTableBody"></tbody>
+              </table>
+            </div>
+            <div class="add-form">
+              <input id="rsvpNewName" placeholder="Guest name">
+              <input id="rsvpNewParty" type="number" min="1" max="10" placeholder="Party size" style="max-width:110px;">
+              <button id="rsvpAddGuest">Add &amp; generate code</button>
+            </div>
+          </div>
+
+          <div class="rsvp-col">
+            <div class="card">
+              <div class="card-head"><h3>Door Check-In</h3><span class="muted">Verify, then confirm</span></div>
+              <div class="closed-banner" id="checkinClosedBanner">
+                <span id="checkinClosedText">Check-in completed</span>
+                <button class="toggle-btn" id="reopenCheckinBtn">Reopen</button>
+              </div>
+              <form class="checkin-form" id="checkinForm">
+                <input id="checkinCode" placeholder="Enter or scan code" autocomplete="off" maxlength="12">
+                <button type="submit" class="btn-primary">Verify</button>
+              </form>
+              <div class="verify-card" id="verifyCard"></div>
+              <div class="card-head" style="margin-top:18px;margin-bottom:6px;"><h3>Recent Check-Ins</h3></div>
+              <div id="recentCheckins"></div>
+            </div>
+
+            <div class="card">
+              <div class="card-head"><h3>Meals & Dietary</h3><span class="muted" id="mealTotalLabel"></span></div>
+              <div id="mealBars"></div>
+              <div id="dietNotes" style="margin-top:6px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <div class="card-head"><h3>Public RSVP Page</h3><span class="muted">What guests see when they reply with their code</span></div>
+          <div class="portal">
+            <div class="portal-frame">
+              <h4 id="portalEventName">You're invited</h4>
+              <p>Enter the code from your invitation to reply.</p>
+              <form class="checkin-form" id="portalLookupForm">
+                <input id="portalCode" placeholder="Invitation code" autocomplete="off" maxlength="12">
+                <button type="submit" class="btn-primary">Find invite</button>
+              </form>
+              <div class="login-error" id="portalError"></div>
+              <div id="portalReplyForm" style="display:none;">
+                <div style="font-size:14px;font-weight:700;margin-bottom:10px;" id="portalGuestName"></div>
+                <div class="field-col">
+                  <div class="seg" id="portalAttendSeg">
+                    <button type="button" class="chip" data-attend="confirmed">Joyfully accept</button>
+                    <button type="button" class="chip" data-attend="declined">Regretfully decline</button>
+                  </div>
+                  <div id="portalAttendFields" class="field-col" style="margin-top:0;">
+                    <select id="portalParty"></select>
+                    <select id="portalMeal"></select>
+                    <input id="portalDiet" placeholder="Dietary needs (optional), e.g. Vegan, Nut-Free">
+                  </div>
+                </div>
+                <button type="button" class="btn-primary" id="portalSubmit" style="width:100%;justify-content:center;margin-top:14px;">Send reply</button>
+              </div>
+            </div>
+            <div class="portal-frame" id="portalPassWrap">
+              <h4>Guest pass</h4>
+              <p>After replying, guests get a pass to show at the door. Staff enter the code at Door Check-In.</p>
+              <div id="portalPass" class="notif-empty">No reply submitted yet.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- ================= RUN OF SHOW ================= -->
       <section id="view-timeline" class="view">
         <h1 class="page-title">Run of Show — Day-Of Timeline</h1>
@@ -682,15 +847,17 @@ const payments = [
   {vendor:'Studio Frame Photography', amount:'$3,500', due:'Aug 15', status:'paid'},
 ];
 
+// invited = party size on the invitation; party = how many are coming once they reply.
 const guests = [
-  {name:'Maria Gonzalez', party:2, rsvp:'confirmed', dietary:['Vegan'], table:'4'},
-  {name:'James Whitfield', party:1, rsvp:'pending', dietary:[], table:'—'},
-  {name:'Priya Natarajan', party:3, rsvp:'confirmed', dietary:['Gluten-Free'], table:'2'},
-  {name:'Tom & Ellie Baxter', party:2, rsvp:'declined', dietary:[], table:'—'},
-  {name:'Chidi Okafor', party:1, rsvp:'confirmed', dietary:['Nut-Free','Vegan'], table:'4'},
-  {name:'Sana Malik', party:4, rsvp:'pending', dietary:['Halal'], table:'—'},
-  {name:'Robert Kim', party:2, rsvp:'confirmed', dietary:[], table:'6'},
+  {name:'Maria Gonzalez', party:2, invited:2, rsvp:'confirmed', dietary:['Vegan'], table:'4', code:'MG7K2Q', meal:'Vegetarian', checkedInAt:null},
+  {name:'James Whitfield', party:1, invited:1, rsvp:'pending', dietary:[], table:'—', code:'JW4H9T', meal:'', checkedInAt:null},
+  {name:'Priya Natarajan', party:3, invited:3, rsvp:'confirmed', dietary:['Gluten-Free'], table:'2', code:'PN8D3X', meal:'Fish', checkedInAt:null},
+  {name:'Tom & Ellie Baxter', party:2, invited:2, rsvp:'declined', dietary:[], table:'—', code:'TB2M6R', meal:'', checkedInAt:null},
+  {name:'Chidi Okafor', party:1, invited:1, rsvp:'confirmed', dietary:['Nut-Free','Vegan'], table:'4', code:'CO5W8N', meal:'Vegetarian', checkedInAt:null},
+  {name:'Sana Malik', party:4, invited:4, rsvp:'pending', dietary:['Halal'], table:'—', code:'SM9F4L', meal:'', checkedInAt:null},
+  {name:'Robert Kim', party:2, invited:2, rsvp:'confirmed', dietary:[], table:'6', code:'RK3P7V', meal:'Chicken', checkedInAt:null},
 ];
+const mealOptions = ['Chicken','Fish','Vegetarian'];
 const allDietary = ['Vegan','Gluten-Free','Nut-Free','Halal'];
 
 const vendors = [
@@ -946,6 +1113,323 @@ function renderVendors(){
   });
 }
 renderVendors();
+
+/* ---------------- RSVP & Check-In ---------------- */
+function esc(s){
+  return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function fmtTime(ts){ return new Date(ts).toLocaleTimeString([], {hour:'numeric', minute:'2-digit'}); }
+function makeCode(){
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no 0/O/1/I, easier to read aloud at the door
+  let code;
+  do{ code = Array.from({length:6}, ()=> chars[Math.floor(Math.random()*chars.length)]).join(''); }
+  while(guests.some(g=>g.code===code));
+  return code;
+}
+function findByCode(raw){
+  const code = raw.trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
+  return guests.find(g=>g.code===code);
+}
+
+let rsvpFilter = 'all';
+let checkinClosedAt = null;
+let pendingVerify = null;
+const rsvpFilters = [
+  {key:'all', label:'All'},
+  {key:'confirmed', label:'Attending'},
+  {key:'pending', label:'Awaiting'},
+  {key:'declined', label:'Declined'},
+  {key:'checked', label:'Checked in'},
+];
+
+function renderRsvpKpis(){
+  const attending = guests.filter(g=>g.rsvp==='confirmed');
+  const headcount = attending.reduce((s,g)=>s+g.party, 0);
+  const plusOnes = attending.reduce((s,g)=>s+g.party-1, 0);
+  const pending = guests.filter(g=>g.rsvp==='pending');
+  const replied = guests.length - pending.length;
+  const checkedParties = guests.filter(g=>g.checkedInAt);
+  const checkedPeople = checkedParties.reduce((s,g)=>s+g.party, 0);
+  document.getElementById('rsvpKpiInvited').textContent = guests.length;
+  document.getElementById('rsvpKpiInvitedSub').textContent = `${guests.length ? Math.round(replied/guests.length*100) : 0}% replied`;
+  document.getElementById('rsvpKpiAttending').textContent = headcount;
+  document.getElementById('rsvpKpiAttendingSub').textContent = `incl. ${plusOnes} plus-one${plusOnes===1?'':'s'}`;
+  document.getElementById('rsvpKpiPending').textContent = pending.length;
+  document.getElementById('rsvpKpiPendingSub').textContent = `${pending.reduce((s,g)=>s+g.invited,0)} seats unconfirmed`;
+  document.getElementById('rsvpKpiChecked').textContent = checkedPeople;
+  document.getElementById('rsvpKpiCheckedSub').textContent = `of ${headcount} expected`;
+}
+
+function renderRsvpChips(){
+  const wrap = document.getElementById('rsvpFilterChips');
+  wrap.innerHTML = '';
+  rsvpFilters.forEach(f=>{
+    const chip = document.createElement('button');
+    chip.className = 'chip' + (rsvpFilter===f.key ? ' selected' : '');
+    chip.textContent = f.label;
+    chip.onclick = ()=>{ rsvpFilter = f.key; renderRsvpChips(); renderRsvpTable(); };
+    wrap.appendChild(chip);
+  });
+}
+
+function renderRsvpTable(){
+  const body = document.getElementById('rsvpTableBody');
+  body.innerHTML = '';
+  const list = guests.filter(g=>{
+    if(rsvpFilter==='all') return true;
+    if(rsvpFilter==='checked') return !!g.checkedInAt;
+    return g.rsvp===rsvpFilter;
+  });
+  if(!list.length){
+    body.innerHTML = '<tr><td colspan="6" class="muted-cell" style="text-align:center;">No guests match this filter.</td></tr>';
+    return;
+  }
+  const replyLabel = {confirmed:'Attending', pending:'Awaiting', declined:'Declined'};
+  list.forEach(g=>{
+    const tr = document.createElement('tr');
+    const coming = g.rsvp==='confirmed';
+    tr.innerHTML = `<td>${esc(g.name)}</td>
+      <td><button class="code-tag" data-code="${g.code}" title="Copy code">${g.code}</button></td>
+      <td><span class="rsvp ${g.rsvp}">${replyLabel[g.rsvp]}</span></td>
+      <td class="${coming && g.meal ? '' : 'muted-cell'}">${coming ? (g.meal ? esc(g.meal) : 'Not chosen') : '—'}</td>
+      <td class="${coming ? '' : 'muted-cell'}">${coming ? g.party-1 : '—'}</td>
+      <td>${g.checkedInAt ? `<span class="rsvp checked">✓ ${fmtTime(g.checkedInAt)}</span>` : '<span class="muted-cell">—</span>'}</td>`;
+    body.appendChild(tr);
+  });
+  body.querySelectorAll('.code-tag').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const code = btn.dataset.code;
+      try{
+        navigator.clipboard.writeText(code).then(()=> showToast(`Code ${code} copied`), ()=> showToast(`Code: ${code}`));
+      }catch(e){ showToast(`Code: ${code}`); }
+    });
+  });
+}
+
+function renderMeals(){
+  const attending = guests.filter(g=>g.rsvp==='confirmed');
+  const counts = {};
+  mealOptions.forEach(m=> counts[m] = 0);
+  let notChosen = 0;
+  attending.forEach(g=>{ if(g.meal) counts[g.meal] += g.party; else notChosen += g.party; });
+  const total = attending.reduce((s,g)=>s+g.party, 0);
+  document.getElementById('mealTotalLabel').textContent = `${total} plate${total===1?'':'s'}`;
+  const bars = document.getElementById('mealBars');
+  bars.innerHTML = '';
+  const rows = mealOptions.map(m=>({label:m, n:counts[m], cls:'ok'}));
+  if(notChosen) rows.push({label:'Not chosen', n:notChosen, cls:'warn'});
+  rows.forEach(r=>{
+    const pct = total ? Math.round(r.n/total*100) : 0;
+    const row = document.createElement('div');
+    row.className = 'budget-bar-row';
+    row.innerHTML = `<div class="top"><span class="cat">${r.label}</span><span class="nums">${r.n} · ${pct}%</span></div>
+      <div class="btrack"><div class="bfill ${r.cls}" style="width:${pct}%"></div></div>`;
+    bars.appendChild(row);
+  });
+  const notes = document.getElementById('dietNotes');
+  const withDiet = attending.filter(g=>g.dietary.length);
+  notes.innerHTML = withDiet.length
+    ? withDiet.map(g=>`<div class="diet-note"><strong>${esc(g.name)}</strong> · ${esc(g.dietary.join(', '))}${g.table!=='—' ? ` · Table ${esc(g.table)}` : ''}</div>`).join('')
+    : '<div class="notif-empty">No dietary notes from attending guests.</div>';
+}
+
+function renderRecentCheckins(){
+  const wrap = document.getElementById('recentCheckins');
+  const recent = guests.filter(g=>g.checkedInAt).sort((a,b)=>b.checkedInAt-a.checkedInAt).slice(0,5);
+  if(!recent.length){
+    wrap.innerHTML = '<div class="notif-empty">No one checked in yet.</div>';
+    return;
+  }
+  wrap.innerHTML = '';
+  recent.forEach(g=>{
+    const div = document.createElement('div');
+    div.className = 'recent-item';
+    div.innerHTML = `<div><div style="font-weight:600;">${esc(g.name)}</div><div class="m">${g.code} · party of ${g.party} · ${fmtTime(g.checkedInAt)}</div></div>
+      <button class="toggle-btn">Undo</button>`;
+    div.querySelector('button').addEventListener('click', ()=>{
+      g.checkedInAt = null;
+      renderRsvpAll();
+      showToast(`Check-in undone for ${g.name}`);
+    });
+    wrap.appendChild(div);
+  });
+}
+
+function renderCheckinState(){
+  const closed = !!checkinClosedAt;
+  document.getElementById('checkinClosedBanner').classList.toggle('show', closed);
+  if(closed) document.getElementById('checkinClosedText').textContent = `Check-in completed at ${fmtTime(checkinClosedAt)}`;
+  document.getElementById('checkinCode').disabled = closed;
+  document.querySelector('#checkinForm button').disabled = closed;
+  const btn = document.getElementById('completeCheckinBtn');
+  btn.textContent = closed ? '✓ Check-in completed' : 'Complete check-in';
+  btn.classList.toggle('done', closed);
+}
+
+function renderRsvpAll(){
+  renderRsvpKpis();
+  renderRsvpTable();
+  renderMeals();
+  renderRecentCheckins();
+  renderCheckinState();
+  renderGuests();
+}
+
+/* Door check-in: verify shows the guest first, staff then confirm */
+const verifyCard = document.getElementById('verifyCard');
+function hideVerify(){ verifyCard.className = 'verify-card'; verifyCard.innerHTML = ''; pendingVerify = null; }
+document.getElementById('checkinForm').addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const input = document.getElementById('checkinCode');
+  if(!input.value.trim()){ showToast('Enter a guest code'); return; }
+  const g = findByCode(input.value);
+  pendingVerify = null;
+  if(!g){
+    verifyCard.className = 'verify-card show err';
+    verifyCard.innerHTML = `<div class="vmsg">No invitation found for “${esc(input.value.trim().toUpperCase())}”.</div>`;
+    return;
+  }
+  const meta = `Party of ${g.party} · ${g.meal ? esc(g.meal) : 'No meal chosen'}${g.dietary.length ? ' · '+esc(g.dietary.join(', ')) : ''}${g.table!=='—' ? ' · Table '+esc(g.table) : ''}`;
+  if(g.checkedInAt){
+    verifyCard.className = 'verify-card show dup';
+    verifyCard.innerHTML = `<div class="vname">${esc(g.name)}</div><div class="vmeta">${meta}</div>
+      <div class="vmsg">Already checked in at ${fmtTime(g.checkedInAt)}. Duplicate entry blocked.</div>`;
+    return;
+  }
+  if(g.rsvp!=='confirmed'){
+    verifyCard.className = 'verify-card show err';
+    verifyCard.innerHTML = `<div class="vname">${esc(g.name)}</div>
+      <div class="vmsg">RSVP is “${g.rsvp==='declined' ? 'Declined' : 'Awaiting reply'}”, so they aren't on the attending list.</div>
+      <div class="verify-actions"><button class="btn-primary" id="verifyConfirm">Check in anyway</button><button class="toggle-btn" id="verifyCancel">Cancel</button></div>`;
+  } else {
+    verifyCard.className = 'verify-card show ok';
+    verifyCard.innerHTML = `<div class="vname">${esc(g.name)}</div><div class="vmeta">${meta}</div>
+      <div class="verify-actions"><button class="btn-primary" id="verifyConfirm">Confirm check-in</button><button class="toggle-btn" id="verifyCancel">Cancel</button></div>`;
+  }
+  pendingVerify = g;
+  document.getElementById('verifyConfirm').addEventListener('click', ()=>{
+    if(!pendingVerify || pendingVerify.checkedInAt) return;
+    const guest = pendingVerify;
+    if(guest.rsvp!=='confirmed') guest.rsvp = 'confirmed';
+    guest.checkedInAt = Date.now();
+    hideVerify();
+    input.value = '';
+    renderRsvpAll();
+    showToast(`${guest.name} checked in (party of ${guest.party})`);
+    input.focus();
+  });
+  document.getElementById('verifyCancel').addEventListener('click', ()=>{ hideVerify(); input.value = ''; input.focus(); });
+});
+
+/* Complete is confirm gated; a mistaken complete reopens in one tap */
+document.getElementById('completeCheckinBtn').addEventListener('click', ()=>{
+  if(checkinClosedAt) return;
+  const checked = guests.filter(g=>g.checkedInAt).length;
+  const expected = guests.filter(g=>g.rsvp==='confirmed').length;
+  if(!confirm(`Complete check-in? ${checked} of ${expected} attending parties are checked in. You can reopen it afterwards.`)) return;
+  checkinClosedAt = Date.now();
+  hideVerify();
+  renderCheckinState();
+  showToast('Check-in completed');
+});
+document.getElementById('reopenCheckinBtn').addEventListener('click', ()=>{
+  checkinClosedAt = null;
+  renderCheckinState();
+  showToast('Check-in reopened');
+});
+
+/* Add guest with a generated invitation code */
+document.getElementById('rsvpAddGuest').addEventListener('click', ()=>{
+  const nameEl = document.getElementById('rsvpNewName');
+  const partyEl = document.getElementById('rsvpNewParty');
+  const name = nameEl.value.trim();
+  const party = Math.min(10, Math.max(1, parseInt(partyEl.value, 10) || 1));
+  if(!name){ showToast('Please enter a guest name'); return; }
+  const code = makeCode();
+  guests.push({name, party, invited:party, rsvp:'pending', dietary:[], table:'—', code, meal:'', checkedInAt:null});
+  nameEl.value = ''; partyEl.value = '';
+  renderRsvpAll();
+  showToast(`${name} added · code ${code}`);
+});
+
+/* Public RSVP page preview */
+let portalGuest = null;
+let portalAttend = 'confirmed';
+function setPortalAttend(val){
+  portalAttend = val;
+  document.querySelectorAll('#portalAttendSeg .chip').forEach(c=> c.classList.toggle('selected', c.dataset.attend===val));
+  document.getElementById('portalAttendFields').style.display = val==='confirmed' ? '' : 'none';
+}
+document.querySelectorAll('#portalAttendSeg .chip').forEach(c=> c.addEventListener('click', ()=> setPortalAttend(c.dataset.attend)));
+document.getElementById('portalLookupForm').addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const err = document.getElementById('portalError');
+  const g = findByCode(document.getElementById('portalCode').value);
+  if(!g){
+    err.textContent = 'We couldn’t find that code. Check your invitation and try again.';
+    document.getElementById('portalReplyForm').style.display = 'none';
+    portalGuest = null;
+    return;
+  }
+  err.textContent = '';
+  portalGuest = g;
+  document.getElementById('portalGuestName').textContent = `Hi ${g.name}, will you be joining us?`;
+  const partySel = document.getElementById('portalParty');
+  partySel.innerHTML = '';
+  for(let i=1;i<=g.invited;i++){
+    const o = document.createElement('option');
+    o.value = i; o.textContent = i===1 ? 'Just me' : `${i} guests (me + ${i-1})`;
+    partySel.appendChild(o);
+  }
+  partySel.value = g.party;
+  const mealSel = document.getElementById('portalMeal');
+  mealSel.innerHTML = '<option value="">Choose a meal</option>' + mealOptions.map(m=>`<option value="${m}">${m}</option>`).join('');
+  mealSel.value = g.meal;
+  document.getElementById('portalDiet').value = g.dietary.join(', ');
+  setPortalAttend(g.rsvp==='declined' ? 'declined' : 'confirmed');
+  document.getElementById('portalReplyForm').style.display = '';
+});
+document.getElementById('portalSubmit').addEventListener('click', ()=>{
+  if(!portalGuest) return;
+  const g = portalGuest;
+  const err = document.getElementById('portalError');
+  if(portalAttend==='confirmed'){
+    const meal = document.getElementById('portalMeal').value;
+    if(!meal){ err.textContent = 'Please choose a meal.'; return; }
+    g.rsvp = 'confirmed';
+    g.party = parseInt(document.getElementById('portalParty').value, 10) || 1;
+    g.meal = meal;
+    g.dietary = document.getElementById('portalDiet').value.split(',').map(s=>s.trim()).filter(Boolean);
+  } else {
+    g.rsvp = 'declined';
+    g.meal = '';
+    g.checkedInAt = null;
+  }
+  err.textContent = '';
+  const pass = document.getElementById('portalPass');
+  pass.className = '';
+  pass.innerHTML = g.rsvp==='confirmed'
+    ? `<div class="pass-card"><div class="pmeta">${esc(sw.options[sw.selectedIndex].text)}</div>
+        <div class="pcode">${g.code}</div><div class="pname">${esc(g.name)}</div>
+        <div class="pmeta">Party of ${g.party} · ${esc(g.meal)}</div>
+        <div class="pmeta" style="margin-top:8px;">Show this code at the door.</div></div>`
+    : `<div class="notif-empty">Thanks for letting us know, ${esc(g.name)}. We'll miss you!</div>`;
+  document.getElementById('portalReplyForm').style.display = 'none';
+  document.getElementById('portalCode').value = '';
+  portalGuest = null;
+  renderRsvpAll();
+  showToast(`Reply received from ${g.name}`);
+});
+
+function updateRsvpEventLabel(){
+  const name = sw.options[sw.selectedIndex] ? sw.options[sw.selectedIndex].text : '';
+  document.getElementById('rsvpEventLabel').textContent = `Invitation codes, guest replies, and verified door check-in for ${name}.`;
+  document.getElementById('portalEventName').textContent = `You're invited: ${name}`;
+}
+sw.addEventListener('change', updateRsvpEventLabel);
+updateRsvpEventLabel();
+renderRsvpChips();
+renderRsvpAll();
 
 /* ---------------- Timeline ---------------- */
 const timelineList = document.getElementById('timelineList');
